@@ -35,12 +35,11 @@ def get_filepath():
 
 
 def save_to_file(file_path: str, data_to_save: []):
-    wf = wave.open(file_path, 'wb')
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(p.get_sample_size(FORMAT))
-    wf.setframerate(SAMPLING_RATE)
-    wf.writeframes(b''.join(data_to_save))
-    wf.close()
+    with wave.open(file_path, 'wb') as wf:
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(p.get_sample_size(FORMAT))
+        wf.setframerate(SAMPLING_RATE)
+        wf.writeframes(b''.join(data_to_save))
 
 
 def run():
@@ -65,7 +64,7 @@ def run():
             if countdown <= 0:
                 # Countdown adds 10 additional seconds to the recording.
                 # Remove last 9 seconds. Leave 1 second offset.
-                sound_to_save = sound_to_save[: int(len(sound_to_save) - 9 * (1 / (CHUNK_SIZE / SAMPLING_RATE)))]
+                sound_to_save = sound_to_save[: int(len(sound_to_save) - 9 * (SAMPLING_RATE / CHUNK_SIZE))]
                 save_to_file(get_filepath(), sound_to_save)
 
                 saving_chunks = False
